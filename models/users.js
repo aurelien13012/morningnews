@@ -5,7 +5,8 @@ const userSchema = mongoose.Schema({
     email: String,
     password: String,
     token: String,
-    wishListArticlesId : [{type: mongoose.Schema.Types.ObjectId, ref : 'article'}]
+    wishListArticlesId : [{type: mongoose.Schema.Types.ObjectId, ref : 'article'}],
+    userlanguage: String
 })
 
 const userModel = mongoose.model('users', userSchema)

@@ -124,8 +124,16 @@ router.get('/addarticles', async function(req, res, next) {
   //on met a jour la bdd : 1.je recupère le user par son token (filtre) 2.on dit ce qu'on veut mettre à jour
   let userList = await userModel.updateOne({token : req.query.token}, { wishListArticlesId : userWishList })
 
-
   res.json({userList})
+})
+
+router.get('/set-language', async function(req,res,next) {
+  console.log('req.query', req.query);
+  var user = await userModel.findOne({token: req.query.token});
+  console.log('user', user);
+  await userModel.updateOne({token: req.query.token}, {userlanguage: req.query.lang});
+  var result='OK';
+  res.json({result});
 })
 
 module.exports = router;

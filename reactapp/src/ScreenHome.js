@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import {Input,Button} from 'antd';
-import {Link, Redirect} from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 function ScreenHome(props) {
