@@ -9,8 +9,10 @@ var options = {
 mongoose.connect('mongodb+srv://Aurelien:lacapsule@cluster0.cylru.mongodb.net/morningnews?retryWrites=true&w=majority',
     options,
     function(err){
+        if(err) {
         console.log(err);
-    }
-)
+    }else{
+        console.log('_______BDD OKAY_________')} }
+    )
 
 module.exports = mongoose
