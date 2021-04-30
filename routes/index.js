@@ -19,7 +19,7 @@ router.post('/sign-up', async function(req,res,next){
   })
 
   if(data != null){
-    error.push('utilisateur déjà présent')
+    error.push('utilisateur déjà présent en bdd')
   }
 
   if(req.body.usernameFromFront == ''
