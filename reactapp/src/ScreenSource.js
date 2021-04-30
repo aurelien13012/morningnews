@@ -9,24 +9,56 @@ function ScreenSource(props) {
 
   const [sourceList, setSourceList] = useState([])
   const [selectedLang, setSelectedLang] = useState(props.selectedLang)
+  const [userTokenFromStore, setUserTokenFromStore] = useState(props.userToken) 
+  const [imageBorderFr, setImageBorderFr] = useState(imageNoBorder)
+  const [imageBorderEn, setImageBorderEn] = useState(imageNoBorder)
 
+  var imageBorder = {
+    width:'60px', 
+    margin:'10px',
+    cursor:'pointer',
+    borderStyle:'solid',
+    borderColor:'white',
+    borderWidth:2,
+    borderRadius:'50%',
+    padding:1
+  }
+
+  var imageNoBorder = {
+    width:'40px', 
+    margin:'10px',
+    cursor:'pointer'
+  }
 
   useEffect(() => {
     const APIResultsLoading = async() => {
       var langue = 'fr'
       var country = 'fr'
+      setImageBorderFr(imageBorder)
+      setImageBorderEn(imageNoBorder)
         
       if(selectedLang == 'en'){
         var langue = 'en'
         var country = 'us'
+        setImageBorderFr(imageNoBorder)
+        setImageBorderEn(imageBorder)
       }
       props.changeLang(selectedLang)
       const data = await fetch(`https://newsapi.org/v2/sources?language=${langue}&country=${country}&apiKey=0ecb411530894d189bfe84286990cf7f`)
       const body = await data.json()
       setSourceList(body.sources)
     }
-
     APIResultsLoading()
+
+    const setUserLanguage = async() => {
+      console.log('selectedLang', selectedLang);
+      console.log('userTokenFromStore', userTokenFromStore);
+
+      const writeLangInDb = await fetch(`/set-language?token=${userTokenFromStore}&lang=${selectedLang}`);
+      console.log(writeLangInDb);
+    }
+    setUserLanguage();
+
   }, [selectedLang])
 
   return (
@@ -34,8 +66,8 @@ function ScreenSource(props) {
         <Nav/>
        
        <div style={{display:'flex', justifyContent:'center', alignItems:'center'}} className="Banner">
-          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/fr.png' onClick={() => setSelectedLang('fr')} />
-          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/uk.png' onClick={() => setSelectedLang('en')} /> 
+          <img style={imageBorderFr} src='/images/fr.png' onClick={() => setSelectedLang('fr')} />
+          <img style={imageBorderEn} src='/images/uk.png' onClick={() => setSelectedLang('en')} /> 
         </div>
 
        <div className="HomeThemes">
@@ -62,7 +94,7 @@ function ScreenSource(props) {
 }
 
 function mapStateToProps(state){
-  return {selectedLang: state.selectedLang}
+  return {selectedLang: state.selectedLang, userToken: state.token}
 }
 
 function mapDispatchToProps(dispatch){
