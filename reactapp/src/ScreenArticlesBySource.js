@@ -14,6 +14,7 @@ function ScreenArticlesBySource(props) {
   const [visible, setVisible] = useState(false)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  // const [articletitle, setArticleTitle] = useState(props.userarticle.title)
 
   var { id } = useParams();
 
@@ -22,11 +23,19 @@ function ScreenArticlesBySource(props) {
       const data = await fetch(`https://newsapi.org/v2/top-headlines?sources=${id}&apiKey=0ecb411530894d189bfe84286990cf7f`)
       const body = await data.json()
       console.log(body)
+
       setArticleList(body.articles) 
     }
-
     findArticles()    
-  },[])
+
+    const updateWishList =  async () => {
+      const add = await fetch (`/addarticles?title=${props.userarticle.title}&description=${props.userarticle.description}&content=${props.userarticle.content}&image=${props.userarticle.urlToImage}&token=${props.usertoken}`)
+      const addbody = await add.json()
+      console.log('list', addbody)
+    }
+    updateWishList()
+
+  },[props.userarticle])
 
   var showModal = (title, content) => {
     setVisible(true)
@@ -107,9 +116,15 @@ function ScreenArticlesBySource(props) {
   );
 }
 
+function mapStateToProps(state){
+  return {usertoken: state.token, userarticle : state.wishList}
+}
+
+
 function mapDispatchToProps(dispatch){
   return {
     addToWishList: function(article){
+      console.log('article', article)
       dispatch({type: 'addArticle',
         articleLiked: article
       })
@@ -118,6 +133,6 @@ function mapDispatchToProps(dispatch){
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ScreenArticlesBySource)

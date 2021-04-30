@@ -5,6 +5,7 @@ var uid2 = require('uid2')
 var bcrypt = require('bcrypt');
 
 var userModel = require('../models/users')
+const wishListArticleModel = require('../models/wishListArticle')
 
 
 router.post('/sign-up', async function(req,res,next){
@@ -38,9 +39,11 @@ router.post('/sign-up', async function(req,res,next){
       email: req.body.emailFromFront,
       password: hash,
       token: uid2(32),
+      wishListArticlesId : []
     })
   
     saveUser = await newUser.save()
+    console.log('newusersaved', saveUser)
   
     
     if(saveUser){
@@ -90,6 +93,39 @@ router.post('/sign-in', async function(req,res,next){
   res.json({result, user, error, token})
 
 
+})
+
+router.get('/addarticles', async function(req, res, next) {
+
+  var newarticle = new wishListArticleModel({
+    title : req.query.title,
+    description : req.query.description,
+    content : req.query.content,
+    image : req.query.urlToImage,
+  })
+
+  await newarticle.save()
+
+  let user = await userModel.findOne({token : req.query.token})
+                                      // .populate('article')
+                                      // .exec()
+  console.log('user',user)
+//On sauve la liste des articles id du user dans une nouvelle variable
+  let userWishList = user.wishListArticlesId
+  console.log('wishlist1', userWishList)
+
+  //on ajoute le nouvel id de larticle
+  userWishList.push(newarticle.id)
+  console.log('wishlist2', userWishList)
+
+  // console.log('user2',user2)
+  // await user2.save()
+
+  //on met a jour la bdd : 1.je recupère le user par son token (filtre) 2.on dit ce qu'on veut mettre à jour
+  let userList = await userModel.updateOne({token : req.query.token}, { wishListArticlesId : userWishList })
+
+
+  res.json({userList})
 })
 
 module.exports = router;
